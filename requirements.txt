@@ -1,1 +1,1 @@
-pytest  # test runner
+# No runtime dependencies yet.
