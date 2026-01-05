@@ -12,6 +12,11 @@ Minimal repo for implementing deterministic trading rules.
 1. Define your inputs (EMA slopes, MACD-H signals).
 2. Use the `etf_health_score` function in `src/etf_health.py`.
 
+## Weekly price change summary
+1. Place ETF CSVs in `data/` matching `* Stock Price History.csv`.
+2. Run `python src/weekly_price_change_summary.py`.
+3. Required columns: `Price`, `Low`, `High`.
+
 ## Requirements
 - Python 3.x
 - any other dependencies listed in `requirements.txt`
