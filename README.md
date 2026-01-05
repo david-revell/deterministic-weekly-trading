@@ -7,6 +7,7 @@ Minimal repo for implementing deterministic trading rules.
 - `specs/`: source specifications (trading rules and logic)
 - `src/`: Python code for processing and logic
 - `docs/`: project documentation and reference materials
+- `data/`: local input data (historical CSVs)
 
 ## Example usage
 1. Define your inputs (EMA slopes, MACD-H signals).
