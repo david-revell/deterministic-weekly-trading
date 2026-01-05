@@ -33,11 +33,11 @@
 5.1 Planned:  
 5.1.1 Implement CSV data handling for ETF health scoring.  
 5.1.2 Add tests for etf_health_score.  
-5.1.3 Add a minimal CLI when ready.
+5.1.3 Add a minimal CLI when ready.  
+5.1.4 (Optional / future) Explore JSON input support for CLI or integrations.
 
 5.2 In Progress:  
 5.2.1 None.  
 
 5.3 Done:  
 5.3.1 Core `etf_health_score` function.  
-
