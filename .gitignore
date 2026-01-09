@@ -13,3 +13,6 @@ env/
 
 # Packaging
 *.egg-info/
+
+# Local data exports
+data/* Stock Price History.csv
