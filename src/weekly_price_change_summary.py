@@ -73,7 +73,7 @@ def main() -> None:
     timestamp_str = uk_time.strftime("%a %d/%m/%Y %H:%M")
     print("Script last run on:", timestamp_str)
 
-    data_dir = Path("data")
+    data_dir = Path(__file__).resolve().parent.parent / "data"
     file_list = sorted(data_dir.glob("* Stock Price History.csv"))
     if not file_list:
         raise FileNotFoundError(
