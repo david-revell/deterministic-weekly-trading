@@ -8,7 +8,7 @@ Minimal repo for implementing **explicit, inspectable weekly trading rules** ove
 ## What works now
 - CSV-based ingestion of historical ETF price data
 - Weekly price change summaries
-- Deterministic indicator logic (EMA slopes, MACD-H inputs)
+- Deterministic indicator logic (EMA/MACD-H calculations in `src/ema_macd.py`)
 - Reproducible, rule-driven outputs (no learning, no tuning)
 
 ## Not implemented (by design / pending)
@@ -29,3 +29,13 @@ Minimal repo for implementing **explicit, inspectable weekly trading rules** ove
 3. Run:
    ```bash
    python src/weekly_price_change_summary.py
+   ```
+
+## EMA/MACD-H Excel usage
+1. Place `* Stock Price History.csv` files in `data/` with a `Price` column.
+2. Run:
+   ```bash
+   python src/ema_macd_excel.py
+   ```
+3. Outputs `Weekly_<ETF>.xlsx` files in `data/` with EMA/MACD-H columns added and overwrites them on each run.
+4. MACD formulas: `fast_line = EMA12 - EMA26`, `slow_line = EMA9(fast_line)`, `macd_h = fast_line - slow_line`.

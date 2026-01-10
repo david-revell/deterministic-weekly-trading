@@ -16,3 +16,4 @@ env/
 
 # Local data exports
 data/* Stock Price History.csv
+data/Weekly_*.xlsx
