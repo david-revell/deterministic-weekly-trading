@@ -9,11 +9,13 @@ Minimal repo for implementing **explicit, inspectable weekly trading rules** ove
 - CSV-based ingestion of historical ETF price data
 - Weekly price change summaries
 - Deterministic indicator logic (EMA/MACD-H calculations in `src/ema_macd.py`)
+- ATR calculations (TR + 14-week SMA) in `src/atr.py`
 - Excel export with ordered columns, trend labels, and rich formatting
+- Latest-week summary Excel output for order levels
 - Reproducible, rule-driven outputs (no learning, no tuning)
 
 ## Highlights
-- End-to-end CSV → Excel pipeline with ordered OHLC + indicator columns
+- End-to-end CSV to Excel pipeline with ordered OHLC + indicator columns
 - Deterministic MACD/EMA outputs with trend flags (Up/Down)
 - Excel polish: header styling, freeze panes, filters, number formats, no borders
 - Conditional formatting for key signals (Change, Direction, Trend columns)
@@ -25,11 +27,11 @@ Minimal repo for implementing **explicit, inspectable weekly trading rules** ove
 - Signal performance evaluation
 
 ## Layout
-- `specs/` – formal specifications of trading rules and logic
-- `src/` – Python implementations of deterministic logic
-- `docs/` – design notes and rationale
-- `data/` – local CSV inputs and generated Excel outputs (not versioned)
-- `examples/` – small sample inputs/outputs for reference
+- `specs/` - formal specifications of trading rules and logic
+- `src/` - Python implementations of deterministic logic
+- `docs/` - design notes and rationale
+- `data/` - local CSV inputs and generated Excel outputs (not versioned)
+- `examples/` - small sample inputs/outputs for reference
 
 ## Example usage
 1. Place ETF CSVs in `data/` matching `* Stock Price History.csv`
@@ -47,6 +49,14 @@ Minimal repo for implementing **explicit, inspectable weekly trading rules** ove
    ```
 3. Outputs `Weekly_<ETF>.xlsx` files in `data/` with EMA/MACD-H columns added and overwrites them on each run.
 4. MACD formulas: `fast_line = EMA12 - EMA26`, `slow_line = EMA9(fast_line)`, `macd_h = fast_line - slow_line`.
+
+## Summary Excel usage
+1. Place `* Stock Price History.csv` files in `data/` with `Price`/`Close`, `High`, and `Low`.
+2. Run:
+   ```bash
+   python src/weekly_summary_excel.py
+   ```
+3. Outputs `Weekly_<ETF>_Summary.xlsx` files in `data/` with a latest-week summary table.
 
 ## Examples
 - `examples/` contains a trimmed CSV and its generated Excel output so you can see the expected format.

@@ -14,18 +14,23 @@
 
 2.1 Inputs include CSV-based weekly price history with `Price` (renamed to `Close`).  
 2.2 EMA/MACD-H enrichment writes Excel outputs for weekly files.  
+2.3 Summary snapshots are written to a separate Excel file per ETF.  
 
 ## 3. Core Logic
 
 3.1 ETF health scoring (1-5) from EMA slopes and MACD-H signals.  
+3.2 Worksheet logic references: `docs/atr_logic.md`, `docs/summary_logic.md`.  
 
 ## 4. Current Status
 
 4.1 Implemented:  
 4.1.1 `src/etf_health.py` with `etf_health_score`.  
-4.1.2 `src/ema_macd.py` with EMA/MACD-H calculations.  
+4.1.2 `src/ema_macd.py` with EMA/MACD-H calculations (EMA-5/12/26).  
 4.1.3 `src/ema_macd_excel.py` to enrich weekly Excel files.  
-4.1.4 `examples/` with sample CSV/Excel outputs.  
+4.1.4 `src/atr.py` with TR/ATR calculations.  
+4.1.5 `src/weekly_summary_excel.py` to generate latest-week summary Excel files.  
+4.1.6 `docs/atr_logic.md` and `docs/summary_logic.md` with current worksheet logic.  
+4.1.7 `examples/` with sample CSV/Excel outputs.  
 
 4.2 Not implemented:  
 4.2.1 CLI or file parsing.  
@@ -40,7 +45,9 @@
 5.1.4 Add tests for etf_health_score.  
 5.1.5 Add a minimal CLI when ready.  
 5.1.6 (Optional / future) Explore JSON input support for CLI or integrations.
-5.1.7 (Nice to have) Improve Excel column auto-width to avoid ####.  
+5.1.7 Add PP indicators (S1/S2/R1/R2) to the summary output.  
+5.1.8 Add HH indicator to the summary output.  
+5.1.9 (Nice to have) Improve Excel column auto-width to avoid ####.  
 
 5.2 In Progress:  
 5.2.1 None.  
