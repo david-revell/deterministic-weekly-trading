@@ -39,6 +39,7 @@
 5.1.4 Add tests for etf_health_score.  
 5.1.5 Add a minimal CLI when ready.  
 5.1.6 (Optional / future) Explore JSON input support for CLI or integrations.
+5.1.7 (Nice to have) Improve Excel column auto-width to avoid ####.  
 
 5.2 In Progress:  
 5.2.1 None.  
@@ -46,3 +47,4 @@
 5.3 Done:  
 5.3.1 Core `etf_health_score` function.  
 5.3.2 CSV to Excel EMA/MACD-H enrichment workflow.  
+5.3.3 Excel formatting (layout, trends, conditional formatting).  
