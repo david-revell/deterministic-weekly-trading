@@ -15,6 +15,7 @@ from ema_macd import add_ema_macd_features
 
 ATR_BELOW_MULTIPLIER = 0.25
 ATR_ABOVE_MULTIPLIER = 1.0
+HH_WINDOW = 5
 
 
 def _coerce_numeric(series: pd.Series) -> pd.Series:
@@ -41,6 +42,11 @@ def _build_summary_tables(
     ema5_value: float,
     ema12_value: float,
     ema26_value: float,
+    s1_value: float,
+    s2_value: float,
+    r1_value: float,
+    r2_value: float,
+    hh_value: float,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     atr_below_label = f"{_format_multiplier(ATR_BELOW_MULTIPLIER)}x ATR (Below)"
     atr_above_label = f"{_format_multiplier(ATR_ABOVE_MULTIPLIER)}x ATR (Above)"
@@ -91,13 +97,13 @@ def _build_summary_tables(
         {
             "Order": "Buy",
             "KPI": "S1",
-            "Value": pd.NA,
+            "Value": s1_value,
             "Chng": pd.NA,
         },
         {
             "Order": "Buy",
             "KPI": "S2",
-            "Value": pd.NA,
+            "Value": s2_value,
             "Chng": pd.NA,
         },
     ]
@@ -130,19 +136,19 @@ def _build_summary_tables(
         {
             "Order": "Sell",
             "KPI": "R1",
-            "Value": pd.NA,
+            "Value": r1_value,
             "Chng": pd.NA,
         },
         {
             "Order": "Sell",
             "KPI": "R2",
-            "Value": pd.NA,
+            "Value": r2_value,
             "Chng": pd.NA,
         },
         {
             "Order": "Sell",
             "KPI": "HH",
-            "Value": pd.NA,
+            "Value": hh_value,
             "Chng": pd.NA,
         },
     ]
@@ -195,6 +201,13 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
     df = add_ema_macd_features(df, close_column=close_col, spans=(12, 26, 5))
     df = add_atr_features(df, high_column=high_col, low_column=low_col, close_column=close_col)
 
+    pp_series = (df[high_col] + df[low_col] + df[close_col]) / 3
+    s1_series = 2 * pp_series - df[high_col]
+    s2_series = pp_series - (df[high_col] - df[low_col])
+    r1_series = 2 * pp_series - df[low_col]
+    r2_series = pp_series + (df[high_col] - df[low_col])
+    hh_series = df[high_col].rolling(window=HH_WINDOW, min_periods=HH_WINDOW).max()
+
     latest = df.iloc[-1]
     buy_df, sell_df = _build_summary_tables(
         close_value=latest[close_col],
@@ -202,6 +215,11 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
         ema5_value=latest["ema_5"],
         ema12_value=latest["ema_12"],
         ema26_value=latest["ema_26"],
+        s1_value=s1_series.iloc[-1],
+        s2_value=s2_series.iloc[-1],
+        r1_value=r1_series.iloc[-1],
+        r2_value=r2_series.iloc[-1],
+        hh_value=hh_series.iloc[-1],
     )
 
     etf_name = file_path.stem.replace(" Stock Price History", "").replace(" ", "_")
@@ -211,9 +229,14 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
         sell_df.to_excel(writer, sheet_name="Summary", index=False, startrow=0, startcol=5)
         worksheet = writer.sheets["Summary"]
 
+        base_font = Font(name="Candara Light")
         header_font = Font(name="Candara Light", bold=True, color="FFFFFF")
         header_fill = PatternFill(fill_type="solid", start_color="16365C", end_color="16365C")
         header_alignment = Alignment(horizontal="left", vertical="center")
+
+        for row in worksheet.iter_rows():
+            for cell in row:
+                cell.font = base_font
 
         header_rows = [1]
         header_cols = [1, 6]
@@ -253,14 +276,16 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
                 for value_cell in cell:
                     value_cell.number_format = "0.00%"
 
-        highlight_fill = PatternFill(fill_type="solid", start_color="FFF2CC", end_color="FFF2CC")
+        highlight_fill = PatternFill(fill_type="solid", start_color="FFFF00", end_color="FFFF00")
         for table_df, start_col in [(buy_df, 0), (sell_df, 5)]:
             if "KPI" not in table_df.columns:
                 continue
             current_rows = table_df.index[table_df["KPI"] == "Current Close Price"].tolist()
             for idx in current_rows:
                 row_number = 2 + idx
+                kpi_col = start_col + 2
                 value_col = start_col + 3
+                worksheet.cell(row=row_number, column=kpi_col).fill = highlight_fill
                 worksheet.cell(row=row_number, column=value_col).fill = highlight_fill
 
 
