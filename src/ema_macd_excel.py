@@ -73,7 +73,7 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
 
     # Ensure oldest-first ordering before EMA calculations.
     df = df.iloc[::-1].reset_index(drop=True)
-    df_with_features = add_ema_macd_features(df, close_column=close_col)
+    df_with_features = add_ema_macd_features(df, close_column=close_col, spans=(12, 26, 5))
 
     date_col = "Date" if "Date" in df_with_features.columns else "date"
     date_series = _normalize_date(df_with_features[date_col])
@@ -96,10 +96,12 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
     )
 
     direction_series = _trend_from_series(close_series)
-    ema26_series = df_with_features["ema_26"]
-    trend_ema26 = _trend_from_series(ema26_series)
+    ema5_series = df_with_features["ema_5"]
+    trend_ema5 = _trend_from_series(ema5_series)
     ema12_series = df_with_features["ema_12"]
     trend_ema12 = _trend_from_series(ema12_series)
+    ema26_series = df_with_features["ema_26"]
+    trend_ema26 = _trend_from_series(ema26_series)
     fast_line_series = df_with_features["fast_line"]
     slow_line_series = df_with_features["slow_line"]
     macd_h_series = df_with_features["macd_h"]
@@ -114,10 +116,12 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
         close_series,
         change_series,
         direction_series,
-        ema26_series,
-        trend_ema26,
+        ema5_series,
+        trend_ema5,
         ema12_series,
         trend_ema12,
+        ema26_series,
+        trend_ema26,
         fast_line_series,
         slow_line_series,
         macd_h_series,
@@ -133,10 +137,12 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
         "Close",
         "Change",
         "Direction",
-        "26-EMA",
-        "Trend 26-EMA",
+        "5-EMA",
+        "Trend 5-EMA",
         "12-EMA",
         "Trend 12-EMA",
+        "26-EMA",
+        "Trend 26-EMA",
         "fast line (12-26)",
         "slow line (9-EMA)",
         "MACD-H",
@@ -182,8 +188,9 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
             "High",
             "Low",
             "Close",
-            "26-EMA",
+            "5-EMA",
             "12-EMA",
+            "26-EMA",
             "fast line (12-26)",
             "slow line (9-EMA)",
             "MACD-H",
@@ -237,52 +244,42 @@ def process_csv(file_path: Path, output_dir: Path) -> None:
         red_font = Font(color="9C0006")
         max_row = worksheet.max_row
         if max_row >= 2:
-            # G: Change (numeric >0 green, <0 red)
-            worksheet.conditional_formatting.add(
-                f"G2:G{max_row}",
-                CellIsRule(operator="greaterThan", formula=["0"], fill=green_fill, font=green_font),
-            )
-            worksheet.conditional_formatting.add(
-                f"G2:G{max_row}",
-                CellIsRule(operator="lessThan", formula=["0"], fill=red_fill, font=red_font),
-            )
+            change_col = None
+            trend_cols = []
+            for col_idx in range(1, worksheet.max_column + 1):
+                header = worksheet.cell(row=1, column=col_idx).value
+                if header == "Change":
+                    change_col = col_idx
+                elif header in {
+                    "Direction",
+                    "Trend 5-EMA",
+                    "Trend 12-EMA",
+                    "Trend 26-EMA",
+                    "Trend MACD-H",
+                }:
+                    trend_cols.append(col_idx)
 
-            # H/J/L/P: Up/Down text rules
-            worksheet.conditional_formatting.add(
-                f"H2:H{max_row}",
-                FormulaRule(formula=['$H2="Up"'], fill=green_fill, font=green_font),
-            )
-            worksheet.conditional_formatting.add(
-                f"H2:H{max_row}",
-                FormulaRule(formula=['$H2="Down"'], fill=red_fill, font=red_font),
-            )
+            if change_col is not None:
+                change_letter = get_column_letter(change_col)
+                worksheet.conditional_formatting.add(
+                    f"{change_letter}2:{change_letter}{max_row}",
+                    CellIsRule(operator="greaterThan", formula=["0"], fill=green_fill, font=green_font),
+                )
+                worksheet.conditional_formatting.add(
+                    f"{change_letter}2:{change_letter}{max_row}",
+                    CellIsRule(operator="lessThan", formula=["0"], fill=red_fill, font=red_font),
+                )
 
-            worksheet.conditional_formatting.add(
-                f"J2:J{max_row}",
-                FormulaRule(formula=['$J2="Up"'], fill=green_fill, font=green_font),
-            )
-            worksheet.conditional_formatting.add(
-                f"J2:J{max_row}",
-                FormulaRule(formula=['$J2="Down"'], fill=red_fill, font=red_font),
-            )
-
-            worksheet.conditional_formatting.add(
-                f"L2:L{max_row}",
-                FormulaRule(formula=['$L2="Up"'], fill=green_fill, font=green_font),
-            )
-            worksheet.conditional_formatting.add(
-                f"L2:L{max_row}",
-                FormulaRule(formula=['$L2="Down"'], fill=red_fill, font=red_font),
-            )
-
-            worksheet.conditional_formatting.add(
-                f"P2:P{max_row}",
-                FormulaRule(formula=['$P2="Up"'], fill=green_fill, font=green_font),
-            )
-            worksheet.conditional_formatting.add(
-                f"P2:P{max_row}",
-                FormulaRule(formula=['$P2="Down"'], fill=red_fill, font=red_font),
-            )
+            for col_idx in trend_cols:
+                col_letter = get_column_letter(col_idx)
+                worksheet.conditional_formatting.add(
+                    f"{col_letter}2:{col_letter}{max_row}",
+                    FormulaRule(formula=[f'${col_letter}2="Up"'], fill=green_fill, font=green_font),
+                )
+                worksheet.conditional_formatting.add(
+                    f"{col_letter}2:{col_letter}{max_row}",
+                    FormulaRule(formula=[f'${col_letter}2="Down"'], fill=red_fill, font=red_font),
+                )
 
 
 def main() -> None:
