@@ -29,6 +29,7 @@ Minimal repo for implementing **explicit, inspectable weekly trading rules** ove
 - `src/` – Python implementations of deterministic logic
 - `docs/` – design notes and rationale
 - `data/` – local CSV inputs and generated Excel outputs (not versioned)
+- `examples/` – small sample inputs/outputs for reference
 
 ## Example usage
 1. Place ETF CSVs in `data/` matching `* Stock Price History.csv`
@@ -46,3 +47,6 @@ Minimal repo for implementing **explicit, inspectable weekly trading rules** ove
    ```
 3. Outputs `Weekly_<ETF>.xlsx` files in `data/` with EMA/MACD-H columns added and overwrites them on each run.
 4. MACD formulas: `fast_line = EMA12 - EMA26`, `slow_line = EMA9(fast_line)`, `macd_h = fast_line - slow_line`.
+
+## Examples
+- `examples/` contains a trimmed CSV and its generated Excel output so you can see the expected format.

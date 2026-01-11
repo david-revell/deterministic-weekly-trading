@@ -25,6 +25,7 @@
 4.1.1 `src/etf_health.py` with `etf_health_score`.  
 4.1.2 `src/ema_macd.py` with EMA/MACD-H calculations.  
 4.1.3 `src/ema_macd_excel.py` to enrich weekly Excel files.  
+4.1.4 `examples/` with sample CSV/Excel outputs.  
 
 4.2 Not implemented:  
 4.2.1 CLI or file parsing.  
