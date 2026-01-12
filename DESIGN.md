@@ -40,15 +40,16 @@
 ## 5. Workboard
 
 5.1 Planned:  
-5.1.1 Add fill percentage stats to summary outputs (start with ATR; placeholders for others).  
-5.1.2 Add Avg. Buy Price input (manual or frontend-provided) to summary output.  
-5.1.3 (Nice to have) Improve summary formatting (column widths, spacing tweaks).  
-5.1.4 (Nice to have) Improve Excel column auto-width to avoid ####.  
-5.1.5 Add a CLI flag for custom data directory in weekly price summary.  
-5.1.6 Implement CSV data handling for ETF health scoring.  
+5.1.1 Read CSV inputs and compute ETF health scores from real weekly data (terminal output for now).  
+5.1.2 Add fill percentage stats to summary outputs (start with ATR; placeholders for others).  
+5.1.3 Add Avg. Buy Price input (manual or frontend-provided) to summary output.  
+5.1.4 (Nice to have) Improve summary formatting (column widths, spacing tweaks).  
+5.1.5 (Nice to have) Improve Excel column auto-width to avoid ####.  
+5.1.6 Add a CLI flag for custom data directory in weekly price summary.  
 5.1.7 Add tests for etf_health_score.  
 5.1.8 Add a minimal CLI when ready.  
 5.1.9 (Optional / future) Explore JSON input support for CLI or integrations.
+5.1.10 (Future) Add a frontend checklist to mirror the weekly manual workflow (Streamlit).  
 
 5.2 In Progress:  
 5.2.1 None.  
