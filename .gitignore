@@ -15,6 +15,6 @@ env/
 *.egg-info/
 
 # Local data exports
-data/* Stock Price History.csv
+data/*Stock Price History.csv
 data/Weekly_*.xlsx
 data/_ignore/
